@@ -15,7 +15,7 @@ client = new KitOnlineClient(authorization, requireLink: true);
 ```csharp
 //1. Создаем позиции чека:
 var subjects = Subject.ListOf(
-	TaxTypeEnum.NoTax /* НДС */, PayAttributeTypeEnum.FullPayment, GoodsAttributeTypeEnum.Commodity,
+	TaxTypeEnum.NoTax /* Ставка НДС */, PayAttributeTypeEnum.FullPayment, GoodsAttributeTypeEnum.Commodity,
 	("Хлеб", 35m, 2m),
 	("Сахар", 21m, 0.5m),
 	("Маракуйя", 230.50m, 1m)
