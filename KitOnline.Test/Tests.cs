@@ -20,18 +20,18 @@ namespace KitOnline.Test
 		private const string TestPassword = null;
 		private const int TestCompanyId = -1;
 
-		private readonly ITestOutputHelper output;
-		private readonly KitOnlineClient client;
+		private readonly ITestOutputHelper _output;
+		private readonly KitOnlineClient _client;
 
 		public Tests(ITestOutputHelper output)
 		{
 			if(TestLogin == null) throw new Exception($"Сперва задайте {nameof(TestLogin)}!");
 			if(TestPassword == null) throw new Exception($"Сперва задайте {nameof(TestPassword)}!");
 			if(TestCompanyId == -1) throw new Exception($"Сперва задайте {nameof(TestCompanyId)}!");
-			
+
 			var authorization = new KitOnlineAuthorization(TestLogin, TestPassword, TestCompanyId);
-			this.output = output;
-			client = new KitOnlineClient(authorization, requireLink: true);
+			_client = new KitOnlineClient(authorization, requireLink: true);
+			_output = output;
 		}
 		
 		/// <summary>
@@ -41,9 +41,8 @@ namespace KitOnline.Test
 		public async void SendCheckAndWaitResult_Success()
 		{
 			var check = CreateTestCheck();
-			var response = await client.SendCheckAndWaitResult(check);
+			var response = await _client.SendCheckAndWaitResult(check);
 			
-			output.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
 			response.Exception.Should().Be(null, "Исключения быть не должно");
 			response.StateCheckResponse.ErrorMessage.Should().Be(null, "Ошибки быть не должно");
 		}
@@ -55,9 +54,8 @@ namespace KitOnline.Test
 		public async Task<string> SendCheck_Success()
 		{
 			var check = CreateTestCheck();
-			var response = await client.SendCheck(check);
+			var response = await _client.SendCheck(check);
 			
-			output.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
 			response.ErrorMessage.Should().Be(null, "Ошибки быть не должно");
 
 			return check.CheckId;
@@ -70,9 +68,24 @@ namespace KitOnline.Test
 		public async void StateCheck_Success()
 		{
 			var checkId = await SendCheck_Success();
-			var response = await client.StateCheck(checkId);
+			var response = await _client.StateCheck(checkId);
 			
 			response.ErrorMessage.Should().Be(null, "Ошибки быть не должно");
+		}
+
+		/// <summary>
+		/// Тестирует факт удаления null полей при сериализации в Json
+		/// </summary>
+		[Fact]
+		public void TestJsonSerializer()
+		{
+			var check = CreateTestCheck();
+			var body = new RequestBody(_client.CreateRequest(check.CheckId), check.CheckId);
+
+			var settings = KitOnlineClient.GetJsonSerializerSettings();
+			settings.Formatting = Formatting.Indented;
+			var json = JsonConvert.SerializeObject(body, settings);
+			json.Should().NotContain("phone", "Телефон не задан, поэтому поля phone не должно быть в json'е");
 		}
 		
 		/// <summary>
@@ -83,20 +96,6 @@ namespace KitOnline.Test
 		{
 			var kitOnlineClient = new KitOnlineClient("tlogin", "tpass42", 7);
 			kitOnlineClient.GetSign("101").Should().Be("A8F447DB87C96957B60F0996AF16A086");
-		}
-		
-		/// <summary>
-		/// Тестирует факт удаления null полей при сериализации в Json
-		/// </summary>
-		[Fact]
-		public void TestJsonSerializer()
-		{
-			var check = CreateTestCheck();
-			var body = new RequestBody(client.CreateRequest(check.CheckId), check.CheckId);
-
-			var settings = KitOnlineClient.GetJsonSerializerSettings();
-			settings.Formatting = Formatting.Indented;
-			output.WriteLine(JsonConvert.SerializeObject(body, settings));
 		}
 
 		/// <summary>
