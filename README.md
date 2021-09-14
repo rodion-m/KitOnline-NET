@@ -1,5 +1,7 @@
 # KitOnline-NET
-API-клиент для взаимодействия с сервисом аренды онлайн касс KitOnline на .NET Standard 2.0 (.NET Core 2.1+, ASP.NET Core 2.1+, .NET Framework 4.6.1+). Null-safety.
+![Nuget](https://img.shields.io/nuget/v/KitOnline.NET?style=for-the-badge)
+
+API-клиент для взаимодействия с сервисом аренды онлайн касс KitOnline на .NET Standard 2.0 (.NET Core 2.1+, ASP.NET Core 2.1+, .NET Framework 4.6.1+). Null Safety.
 
 # Установка
 Добавить к проекту NuGet пакет KitOnline.NET: `Install-Package KitOnline.NET` или `dotnet add package KitOnline.NET`
