@@ -10,7 +10,8 @@ API-клиент для взаимодействия с сервисом аре�
 var authorization = new KitOnlineAuthorization(login, password, companyId);
 client = new KitOnlineClient(authorization, requireLink: true);
 ```
-`requireLink` означает, что при каждой отправке чека у сервиса будет запрошена ссылка на этот чек
+`requireLink` означает, что при каждой отправке чека у сервиса будет запрошена ссылка на этот чек.
+
 Для отправки чека и получения результата рекомендуется использовать метод `SendCheckAndWaitResult`:
 ```csharp
 //1. Создаем позиции чека:
@@ -22,7 +23,8 @@ var subjects = Subject.ListOf(
 ).ToList());
 
 //2. Создаем чек:
-return new Check(Guid.NewGuid().ToString(), 
+return new Check(
+	Guid.NewGuid().ToString(), 
 	sumRub: 286.50m,
 	pay: new Pay(cashRub: 286.50m),
 	email: "noreply@gmail.com",
